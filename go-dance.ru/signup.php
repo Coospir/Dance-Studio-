@@ -10,8 +10,6 @@
 		$password = !empty($_POST['password']) ? password_hash(trim($_POST['password']), PASSWORD_DEFAULT) : null;
 		$phone = !empty($_POST['phone']) ? trim($_POST['phone']) : null;
 
-		/* Проверка на наличие существующего логина в БД */
-
 		$user_exist = "SELECT * FROM users WHERE login = :login";
 		$stmt = $pdo->prepare($user_exist);
 		$stmt -> bindValue(':login', $login);
@@ -19,10 +17,9 @@
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		if($row)
 		{
-			$error='Пользователь с таким логином уже зарегистрирован!';
+			$error = '<div class = "alert alert-danger">Ошибка: пользователь с таким логином уже существует!</div>';
 		}
 
-		/* Проверка на наличие существующей почты в БД */
 
 		$email_exist = "SELECT * FROM users WHERE email = :email";
 		$stmt = $pdo->prepare($email_exist);
@@ -31,7 +28,7 @@
 		$row = $stmt->fetch(PDO::FETCH_ASSOC);
 		if($row)
 		{
-			$error = 'Пользователь с таким email уже зарегистрирован!';
+			$error = '<div class = "alert alert-danger">E-Mail уже занят!</div>';
 		} 
 		
 		if(isset($_POST['iamboss']))
@@ -58,14 +55,12 @@
 
 			if(($result) && (!$row))
 			{
-				print "<script language='Javascript' type='text/javascript'>
-					alert ('Регистрация прошла успешно!');
-					</script>";
-				header('Location: /signup.php');
+				$success = '<div class = "alert alert-success">Регистрация прошла успешно! Авторизируйтесь.</div>';
 			}
 		}			
 	}
-?><?php
+?>
+<?php
 	require 'db.php';
 	if(isset($_POST['loginBtn']))
 	{
@@ -85,13 +80,35 @@
             alert ('Неверный логин или пароль!');
             </script>";
 		} 
+		
+		if($user['user_type'] == 2)
+		{
+			$validPassword = password_verify($password, $user['pass']);
+			if($validPassword)
+			{
+				$_SESSION['logged_user'] = $user['login'];
+				$_SESSION['logged_admin'] = $user['login'];
+				header('Location: /admin.php');
+				exit;	
+			}
+		} else
+			if($user['user_type'] == 1)
+			{
+				$validPassword = password_verify($password, $user['pass']);
+				if($validPassword)
+				{
+					$_SESSION['logged_user'] = $user['login'];
+					$_SESSION['logged_boss'] = $user['login'];
+					header('Location: /boss.php');
+					exit;
+				}
+			}
 			
 		{
 			$validPassword = password_verify($password, $user['pass']);
 			if($validPassword) 
 			{
 					$_SESSION['logged_user'] = $user['login'];
-					header('Location: /index.php');
 					exit;
 				} else
 				{
@@ -102,8 +119,6 @@
 		}
 	}
 ?>
-
-
 
 
 <!DOCTYPE html>
@@ -131,12 +146,10 @@
 <body>
    
     <nav class="navbar navbar-toggleable-md navbar-inverse bg-inverse">
-       
         <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
         </button>
         <a class="navbar-brand" href="index.php">Танцевальная студия</a>
-		Добро пожаловать, <?php echo $_SESSION['logged_user']->login; ?>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item">
@@ -156,13 +169,16 @@
         <div class="container">
             <h1>Вход в систему</h1>
             <p>Войдите в систему, чтобы попробовать все функции ресурса. Зарегистрируйтесь, если у Вас нет аккаунта. </p>
+            <p><a href="index.php" class="btn btn-primary btn-md">На главную страницу</a></p>
         </div> 
     </div>
     
 	<div class="container-fluid">
         <div class="container">
-            <p>Для новых пользователей</p>
-			<button class="btn btn-info" data-toggle="modal" data-target="#Registration">Регистрация</button>
+        	<?php echo $error; 
+        		  echo $success; ?>	
+            <p>Регистрация нового пользователя</p>		
+        	<button class="btn btn-success" data-toggle="modal" data-target="#Registration">Регистрация</button>
             <div id="Registration" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">
@@ -170,8 +186,6 @@
                         <!-- Сама форма -->
                         <form role="form" class="form-horizontal" method="post">
                             <h1>Регистрация пользователя</h1>
-                            <?php echo $success ?>
-                            <?php echo $error ?>
                             <strong>Логин:</strong>
                             <input type="text" class="form-control" name="login" id="login" required value="<?php echo @$data['login']; ?>">
                             <strong>E-Mail адрес:</strong>
@@ -202,7 +216,7 @@
             <br>
             <br>
             <p>Для зарегистрировавшихся пользователей</p>
-            <button class="btn btn-info" data-toggle="modal" data-target="#Login">Авторизация</button>
+            <button class="btn btn-success" data-toggle="modal" data-target="#Login">Авторизация</button>
             <div id="Login" class="modal fade">
                 <div class="modal-dialog">
                     <div class="modal-content">

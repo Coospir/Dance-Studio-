@@ -82,6 +82,7 @@
         <div class="container">
             <h1>Мастер-классы от лучших преподавателей</h1>
             <p>Чтобы повысить свой уровень в танцах, необходимо посещать мастер-классы от различных преподавателей. Запишитесь на мастер-класс прямо сейчас. </p>
+            <p><a href="index.php" class="btn btn-primary btn-md">На главную страницу</a></p>
         </div> 
         </div>
 	<div class="container-fluid">
@@ -91,9 +92,11 @@
           $DB = new PDO('mysql:host=localhost;dbname=DanceStudio','root', '' );
           $DB->exec("SET NAMES utf8");
           
-		  $res = $DB->query("SELECT Trainers.surname, Trainers.name, Classes.class_date, Classes.cost, Classes.name_class, Classes.duration FROM trainers INNER JOIN Classes on Classes.trainer_id = Trainers.trainer_id ORDER BY Classes.class_date DESC LIMIT 1");
+		  $res = $DB->query("SELECT Trainers.surname, Trainers.name, Classes.class_date, Classes.cost, Classes.name_class, Classes.duration, Classes.class_id FROM trainers INNER JOIN Classes on Classes.trainer_id = Trainers.trainer_id ORDER BY Classes.class_date DESC LIMIT 1 ");
 		  $data = $res->fetchAll(PDO::FETCH_ASSOC);
           
+		  
+		  
 		  for ($i = 0; $i < count($data); $i++)
           {
             echo "
@@ -101,12 +104,42 @@
             Дата проведения: ".date_format(new DateTime($data[$i]['class_date']),"d.m.Y")."<br>
             Преподаватель: ".$data[$i]['surname']." ".$data[$i]['name']."<br>
             Продолжительность класса: ".$data[$i]['duration']."<br>
-            Стоимость: ".$data[$i]['cost']."<br>";
+            Стоимость: ".$data[$i]['cost']." руб. <br>";
           }
         ?>	
+		
+		<?php 
+			require 'db.php';
+			if(isset($_POST['goClass']))
+			{
+				$id = !empty($_POST['selectClass']) ? trim($_POST['selectClass']) : null;
+				$fname = !empty($_POST['fname']) ? trim($_POST['fname']) : null;
+				$lname = !empty($_POST['lname']) ? trim($_POST['lname']) : null;
+				$email = !empty($_POST['email']) ? trim($_POST['email']) : null;
+				$phone = !empty($_POST['phone']) ? trim($_POST['phone']) : null;
+				
+				$goClass = "call UserRegistrationToClass(:selectClass, :fname, :lname, :email, :phone)";
+				$stmt = $pdo->prepare($goClass);
+				$stmt -> bindValue(':selectClass', $id);
+				$stmt -> bindValue(':fname', $fname);
+				$stmt -> bindValue(':lname', $lname);
+				$stmt -> bindValue(':email', $email);
+				$stmt -> bindValue(':phone', $phone);
+				$result = $stmt->execute();
+				if($result) 
+				{
+					print "<script language='Javascript' type='text/javascript'>
+					alert ('Вы успешно зарегистрировались на класс!');
+					</script>";
+				} 
+			}
+		
+		
+		?>
+		
 			<hr>
 			<h3>Регистрация</h3>
-            <form>
+            <form method="post">
                 <label for="fname">Ваше имя</label>
                 <input type="text" class="form-control"  id="fname" name="fname" required>
                 <label for="lname">Ваша фамилия</label>
@@ -118,12 +151,28 @@
                 <script src="js/maskedinput.js"></script>
                 <script type="text/javascript">
                     jQuery(function($){
-                        $("#phone").mask("9(999) 999-9999");
+                        $("#phone").mask("9(999) 999-99-99");
                     });
                 </script>
                 <input type="text" class="form-control"  id="phone" name="phone" required>
-				<br>
-                <input type="submit"  class="btn btn-success" value="Зарегистрироваться">
+				<label for="selectClass">Выберите мастер-класс</label>
+				<select class="form-control" id="selectClass" name="selectClass">
+				<?php 
+					$DB = new PDO('mysql:host=localhost;dbname=DanceStudio','root', '' );
+				    $DB->exec("SET NAMES utf8");
+				  
+					$res = $DB->query("SELECT Trainers.surname, Trainers.name, Classes.class_date, Classes.cost, Classes.name_class, Classes.duration, Classes.class_id FROM trainers INNER JOIN Classes on Classes.trainer_id = Trainers.trainer_id ORDER BY Classes.class_date");
+					$data = $res->fetchAll(PDO::FETCH_ASSOC);
+					for
+					($i=0; $i < count($data); $i++)
+					{
+						echo "<option value=".$data[$i]['class_id'].">".$data[$i]['name_class']."</option>";
+					}
+				
+				?>
+				</select>
+                <br>
+				<input type="submit"  class="btn btn-success" id="goClass" name="goClass" value="Зарегистрироваться">
             </form>
             <hr>
             <footer>

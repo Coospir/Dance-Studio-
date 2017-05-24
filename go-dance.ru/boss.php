@@ -53,24 +53,11 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Добро пожаловать, <?php echo $_SESSION['logged_user'] ?></a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="#">О нас</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="#">Выход</a>
-                    </div>
-                </li>
-				<?php } else { ?>
-			   <li class="nav-item dropdown">
-                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Вход в систему</a>
-                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-                        <a class="dropdown-item" href="signup.php">Войти в систему</a>
-                        <a class="dropdown-item" href="boss.php">Для руководителей студий</a>
-                        <a class="dropdown-item" href="#">О нас</a>
-                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="admin.php">Панель администратора</a>
                         <a class="dropdown-item" href="logout.php">Выход</a>
                     </div>
                 </li>
-			   <?php } ?>
-            </ul>
+				</ul>
         </div>
     </nav>
      <div class="jumbotron">
@@ -131,10 +118,36 @@
             </div>
             <hr>
             <footer>
+                <p><a href="index.php" class="btn btn-primary btn-md">На главную страницу</a></p>
                 <p>&copy; Все права защищены, 2017</p>
             </footer>
         </div>
 	</div>
+				<?php } else { ?>
+			   <li class="nav-item dropdown">
+                    <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Вход в систему</a>
+                    <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="signup.php">Войти в систему</a>
+                        <a class="dropdown-item" href="boss.php">Для руководителей студий</a>
+                        <a class="dropdown-item" href="#">О нас</a>
+                        <div class="dropdown-divider"></div>
+                        <a class="dropdown-item" href="logout.php">Выход</a>
+                    </div>
+                </li>
+				</ul>
+        </div>
+    </nav>
+     <div class="jumbotron">
+        <div class="container">
+            <h1>Упс.. Вы не руководитель студии.. А хотите им быть?</h1>
+            <p>Зарегистрируйте аккаунт с возможностями руководителя студии.</p>
+            <p><a href="signup.php" class="btn btn-success">Регистрация нового руководителя</a></p>
+			<p>Или войдите в уже существующий.</p>
+			<p><a href="signup.php" class="btn btn-success">Вход для руководителя</a></p>
+        </div> 
+    </div>
+			   <?php } ?>
+            
 
 </body>
 

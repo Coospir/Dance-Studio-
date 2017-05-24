@@ -52,6 +52,7 @@
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="http://example.com" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">Добро пожаловать, <?php echo $_SESSION['logged_user'] ?></a>
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+                        <a class="dropdown-item" href="admin.php">Панель администратора</a>
                         <a class="dropdown-item" href="boss.php">Для руководителей студий</a>
                         <a class="dropdown-item" href="#">О нас</a>
                         <div class="dropdown-divider"></div>
@@ -64,9 +65,6 @@
                     <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                         <a class="dropdown-item" href="signup.php">Войти в систему</a>
                         <a class="dropdown-item" href="boss.php">Для руководителей студий</a>
-                        <a class="dropdown-item" href="#">О нас</a>
-                        <div class="dropdown-divider"></div>
-                        <a class="dropdown-item" href="logout.php">Выход</a>
                     </div>
                 </li>
 			   <?php } ?>
@@ -78,8 +76,7 @@
         <div class="container">
             <h1>Проект "Танцевальная студия"</h1>
             <p>Первый в России бесплатный ресурс в танцевальной индустрии с огромным функционалом. </p>
-            <p>С чего начать?</p>
-            <p><a href="signup.php" class="btn btn-primary btn-lg">Регистрация пользователя</a></p>
+            <p><a href="signup.php" class="btn btn-primary btn-lg">Регистрация нового пользователя</a></p>
         </div> 
     </div>
 	<div class="container-fluid">
